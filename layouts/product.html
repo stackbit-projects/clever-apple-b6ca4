@@ -1,0 +1,69 @@
+{% extends "body.html" %}
+{% block content %}
+    {% set primary_bg_img_opacity_pct = site.params.bg_image_primary_opacity | default(100, true) %}
+    {% set primary_bg_img_opacity = primary_bg_img_opacity_pct * 0.01 %}
+    <main class="content">
+        <section class="product content__row content__row--full-width">
+            <div class="product__background-left">
+                {% if site.params.bg_image_primary %}
+                <div class="product__background-left-img" style="background-image: url('{{ site.params.bg_image_primary | relative_url }}'); opacity: {{ primary_bg_img_opacity }};"></div>
+                {% endif %}
+            </div>
+            {% if site.params.bg_image_secondary %}
+            <div class="product__background-right" style="background-image: url('{{site.params.bg_image_secondary | relative_url}}')"></div>
+            {% endif %}
+            <div class="product__header">
+                <a href="{{ '/store' | relative_url }}" class="product__back-to-store-link">
+                    <svg width="20" height="10" viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.739 4.309h17.011v1.284h-17.11l3.43 3.396-0.895 0.886-4.924-4.875 4.924-4.875 0.895 0.886-3.331 3.298z"></path>
+                    </svg>
+                    see all products
+                </a>
+            </div>
+            <figure class="product__figure">
+                {% set include_dict = {'image': page.params.default_original_image, 'alt': page.title, 'cssClass': 'product__image'} %}
+                {% include "picture.html" %}
+            </figure>
+            <div class="product__details">
+                <h1 class="product__title">
+                    {{ page.title }}
+                </h1>
+
+                {% if page.params.category %}
+                    {% set category_page = getPageByFilePath(page.params.category) %}
+                    <h2 class="product__category">
+                        <a href="{{ category_page.url | relative_url }}"> {{ category_page.title }} </a>
+                    </h2>
+                {% endif %}
+                <div class="product__price">
+                    ${{ page.params.price }}
+                </div>
+
+                <article class="product__description">
+                    {{ page.params.description }}
+                </article>
+
+                {% set include_dict = {'product_page': page} %}
+                {% include "buy_button.html" %}
+            </div>
+        </section>
+
+        {% if page.params.category %}
+            <section class="content__row">
+                <h2 class="content__row-title">Related</h2>
+                {% set product_pages = getPages('/products') | sort_array('order', 'asc') | where('id', '!=', page.params.id) %}
+                {% set category_page = getPageByFilePath(page.params.category) %}
+                {% set include_dict = {'product_pages': product_pages, 'category_url': category_page.url, 'cssClass': 'store__product-grid', 'site': site} %}
+
+                {% include "product_grid.html" %}
+            </section>
+        {% endif %}
+
+        <a href="{{ '/store' | relative_url }}" class="content__row content__row--full-width content__row--mb-0 product__back-to-store"{% if site.params.bg_image_product %} style="background-image: url('{{site.params.bg_image_product | relative_url}}')"{% endif %}>
+            <svg width="20" height="10" viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.739 4.309h17.011v1.284h-17.11l3.43 3.396-0.895 0.886-4.924-4.875 4.924-4.875 0.895 0.886-3.331 3.298z"></path>
+            </svg>
+            see all products
+        </a>
+    </main>
+{% endblock %}

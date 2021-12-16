@@ -1,0 +1,25 @@
+{% set section = include_dict.section %}
+{% set bg_img_opacity_pct = section.background_image_opacity | default(100, true) %}
+{% set bg_img_opacity = bg_img_opacity_pct * 0.01 %}
+<section class="hero bg-color" data-id="{{section.section_id}}">
+    {% if section.background_image %}
+    <div class="hero__bg-img" style="background-image: url('{{ section.background_image | relative_url }}'); opacity: {{ bg_img_opacity }};"></div>
+    {% endif %}
+    <div class="hero__title">{{ section.content | markdownify }}</div>
+    <div class="hero__links link-group">
+      {% for action in section.actions %}
+        {% set action_style = action.style | default('primary', true) %}
+        <a href="{{ action.url | relative_url }}" {{ classNames('link', {
+              'link--filled': action_style == 'primary',
+              'link--borderless': action_style == 'link'
+            }) }}>
+          {{ action.title }}
+          {% if action.arrow %}
+          <svg width="26" height="14" viewBox="0 0 26 14" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.682 6.079h-22.682v1.712h22.814l-4.574 4.528 1.194 1.182 6.566-6.5-6.566-6.5-1.194 1.182 4.442 4.397z"></path>
+          </svg>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+</section>
